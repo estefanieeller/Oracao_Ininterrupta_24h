@@ -16,11 +16,6 @@
     header {
       text-align: center;
     }
-    header img {
-      max-width: 150px;
-      height: auto;
-      margin-bottom: 10px;
-    }
     header h1, header h2 {
       font-size: 13px;
     }
@@ -73,9 +68,8 @@
 <body>
 
 <header>
-  <img src="logo.jpeg" alt="Logo da Igreja" />
   <h1>Período de Oração Ininterrupta 24H</h1>
-  <h2>Igreja Cristã Maranata - Conforto - Volta Redonda-RJ</h2>
+  <h2>Igreja Cristã Maranata - Campinas - São José/SC</h2>
 </header>
 
 <table border="1">
@@ -117,16 +111,18 @@
       const endMinute = pad(endM);
 
       oracoes.push({
-        codigo: `${startHour}${startMinute}${endHour}${endMinute}`,
+        codigo: `${startHour}${startMinute}${endHour}${endMinute}`, // código único para cada faixa
         horario: `${startHour}:${startMinute} às ${endHour}:${endMinute}`
       });
     }
   }
 
+  // Carrega nomes do localStorage
   oracoes.forEach(o => {
     o.nome = localStorage.getItem(o.codigo) || "";
   });
 
+  // Renderiza tabela
   const tabela = document.getElementById("tabela-oracoes");
   for (let i = 0; i < oracoes.length; i += 2) {
     const linha = document.createElement("tr");
