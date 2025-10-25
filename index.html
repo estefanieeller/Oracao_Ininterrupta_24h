@@ -1,102 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oração Ininterrupta 24h</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: sans-serif;
-      font-size: 10px;
-    }
-    body {
-      padding: 120px 0;
-    }
-    header {
-      text-align: center;
-    }
-    header h1, header h2 {
-      font-size: 13px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      max-width: 800px;
-      margin: auto;
-    }
-    table td {
-      padding: 0;
-    }
-    table thead td {
-      font-weight: bold;
-      background-color: #cecece;
-      height: 30px;
-      text-align: center;
-    }
-    table td.hour {
-      text-align: center;
-    }
-    table td input {
-      width: 100%;
-      padding: 2px;
-      border-radius: 0;
-      border: none;
-      font-size: 10px;
-    }
-    #success {
-      display: none;
-    }
-    #success-box {
-      position: fixed;
-      z-index: 999999;
-      top: 10px;
-      right: 10px;
-      width: 130px;
-      background-color: green;
-      display: flex;
-      gap: 10px;
-      color: #fff;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 12px;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oração Ininterrupta 24h</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+      font-size: 10px;
+    }
+    body {
+      padding: 120px 0;
+    }
+    header {
+      text-align: center;
+    }
+    header h1, header h2 {
+      font-size: 13px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+    }
+    table td {
+      padding: 0;
+    }
+    table thead td {
+      font-weight: bold;
+      background-color: #cecece;
+      height: 30px;
+      text-align: center;
+    }
+    table td.hour {
+      text-align: center;
+    }
+    table td input {
+      width: 100%;
+      padding: 2px;
+      border-radius: 0;
+      border: none;
+      font-size: 10px;
+    }
+    #success {
+      display: none;
+    }
+    #success-box {
+      position: fixed;
+      z-index: 999999;
+      top: 10px;
+      right: 10px;
+      width: 130px;
+      background-color: green;
+      display: flex;
+      gap: 10px;
+      color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  <h1>Período de Oração Ininterrupta 24H</h1>
-  <h2>Igreja Cristã Maranata - Conforto - Volta Redonda/RJ</h2>
+  <h1>Período de Oração Ininterrupta 24H</h1>
+  <h2>Igreja Cristã Maranata - Conforto - Volta Redonda/RJ</h2>
 </header>
 
 <table border="1">
-  <thead>
-    <tr>
-      <td>Horário</td>
-      <td>Nome</td>
-      <td>Horário</td>
-      <td>Nome</td>
-    </tr>
-  </thead>
-  <tbody id="tabela-oracoes"></tbody>
+  <thead>
+    <tr>
+      <td>Horário</td>
+      <td>Nome</td>
+      <td>Horário</td>
+      <td>Nome</td>
+    </tr>
+  </thead>
+  <tbody id="tabela-oracoes"></tbody>
 </table>
 
 <div id="success">
-  <div id="success-box">
-    ✅ Nome gravado!
-  </div>
+  <div id="success-box">
+    ✅ Nome gravado!
+  </div>
 </div>
 
-<script>
+
+<script type="module">
+  // 1. Importa as funções que vamos usar (App + Banco de Dados)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+  // 2. A SUA CONFIGURAÇÃO DO FIREBASE (COLEI AQUI)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOGurJNdXhVJE-FX0gRuM0fk7bmq09QRE",
+    authDomain: "lista-oracao2025.firebaseapp.com",
+    projectId: "lista-oracao2025",
+    storageBucket: "lista-oracao2025.firebasestorage.app",
+    messagingSenderId: "154424681604",
+    appId: "1:154424681604:web:776f9a066f3fb8f8f5ced1"
+  };
+
+  // 3. Inicializa o Firebase e o Banco de Dados
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const horariosRef = collection(db, "horarios"); // O nome da nossa "pasta" no banco
+
+  // --- O resto do seu código, idêntico ao anterior ---
+  
   const oracoes = [];
 
   function pad(num) {
     return num.toString().padStart(2, '0');
   }
 
+  // A sua lógica de gerar os horários
   for (let h = 0; h < 24; h++) {
     for (let m = 0; m < 60; m += 15) {
       const startHour = pad(h);
@@ -111,22 +134,16 @@
       const endMinute = pad(endM);
 
       oracoes.push({
-        codigo: `${startHour}${startMinute}${endHour}${endMinute}`, // código único para cada faixa
+        codigo: `${startHour}${startMinute}${endHour}${endMinute}`,
         horario: `${startHour}:${startMinute} às ${endHour}:${endMinute}`
       });
     }
   }
 
-  // Carrega nomes do localStorage
-  oracoes.forEach(o => {
-    o.nome = localStorage.getItem(o.codigo) || "";
-  });
-
-  // Renderiza tabela
+  // Renderiza a tabela
   const tabela = document.getElementById("tabela-oracoes");
   for (let i = 0; i < oracoes.length; i += 2) {
     const linha = document.createElement("tr");
-
     for (let j = 0; j < 2; j++) {
       const o = oracoes[i + j];
       if (o) {
@@ -136,18 +153,29 @@
 
         const tdInput = document.createElement("td");
         const input = document.createElement("input");
-        input.value = o.nome;
+        
+        input.id = `input-${o.codigo}`; 
         input.setAttribute("data-codigo", o.codigo);
         input.placeholder = "Digite o nome";
 
-        input.addEventListener("change", function () {
+        // Salva no Firebase quando o campo muda
+        input.addEventListener("change", async function () {
           const nome = this.value.trim();
           const codigo = this.getAttribute("data-codigo");
-          localStorage.setItem(codigo, nome);
-          document.getElementById("success").style.display = "block";
-          setTimeout(() => {
-            document.getElementById("success").style.display = "none";
-          }, 2000);
+          
+          try {
+            const docRef = doc(db, "horarios", codigo); 
+            await setDoc(docRef, { nome: nome }); 
+            
+            document.getElementById("success").style.display = "block";
+            setTimeout(() => {
+              document.getElementById("success").style.display = "none";
+            }, 2000);
+
+          } catch (e) {
+            console.error("Erro ao salvar: ", e);
+            alert("Erro ao salvar o nome!");
+          }
         });
 
         tdInput.appendChild(input);
@@ -155,10 +183,27 @@
         linha.appendChild(tdInput);
       }
     }
-
     tabela.appendChild(linha);
   }
+
+  // --- 4. A MÁGICA DO TEMPO REAL ---
+  // "Escuta" o banco de dados e atualiza a tela de todos
+  onSnapshot(horariosRef, (snapshot) => {
+    snapshot.forEach((doc) => {
+      const codigo = doc.id;
+      const data = doc.data(); 
+      const inputElement = document.getElementById(`input-${codigo}`);
+      
+      if (inputElement) {
+        inputElement.value = data.nome;
+      }
+    });
+  });
+
 </script>
 
 </body>
 </html>
+</body>
+</html>
+
